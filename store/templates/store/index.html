@@ -1,0 +1,44 @@
+{% extends "store/layouts/main.html" %}
+{% load humanize %}
+{% block content %}
+    {% include 'store/inc/slider.html' %}
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Trending</h3>
+                <hr>
+                <div class="row">
+                    {% for item in trending_Products %}
+<div class="col-md-3">
+    <div class="card" style="margin-bottom:20px;">
+        
+            <div class="card-body product_data">
+                <a href="{% url 'productview' item.category.slug item.slug %}">
+                    <div class="category-image" style="height: 200px; overflow: hidden;">
+                        <img src="{{ item.product_imagen.url }}" alt="Product image" class="img-fluid" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <hr>
+                    <h4 class="text-center" style="color:black;font-size:20px;">{{item.name}}</h4>
+                </a>
+                <span class="float-start" style="color:black;font-size:18px;">$ {{item.selling_price | floatformat:0 | intcomma}}</span>
+                <span class="float-end mb-2">
+                    <input type="hidden" class="prod_id" value="{{item.id}}">
+                    <input type="hidden" value="1" class="qty-input">
+                    {% if item.quantity > 0 %}
+                        <button type="button" class="btn btn-primary badge me-3 addToCartBtn">Añadir al carro <i class="fa fa-shopping-cart"></i></button>
+                    {% else %}
+                        <h6>Fuera de stock</h6>
+                    {% endif %}
+                </span>
+            </div>
+        
+    </div>
+</div>
+{% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+    

@@ -1,0 +1,175 @@
+{% extends "store/layouts/main.html" %}
+{% load humanize %}
+{% block content %}
+<div class="py-3 directorio">
+    <div class="container">
+        <a class="text-white" href="{% url 'home' %}"> Inicio /</a>
+        <a class="text-white" href="{% url 'cart' %}"> Pagar </a>
+    </div>
+</div>
+
+<div class="container mt-3">
+    <form action="{% url "placeorder" %}" method="POST">
+        {% csrf_token %}
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow checkoutform">
+                <div class="card-body">
+                    <h6>Detalles del comprador</h6>
+                    <hr>
+                    <div class="row checkoutform">
+                        <div class="col-md-6">
+                            <label>Nombre</label>
+                            <input type="text" required class="form-control" value="{{request.user.first_name}}" name="fname" placeholder="José">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Apellido</label>
+                            <input type="text" required class="form-control" value="{{request.user.last_name}}" name="lname" placeholder="Martines">
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label>Correo</label>
+                            <input type="email" required class="form-control" name="email" value="{{request.user.email}}" placeholder="ejemplo@gmail.com">
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label>Telefono</label>
+                            <input type="text" required class="form-control" name="phone" value="{{userprofile.phone}}" placeholder="+56912345678">
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <label>Dirección</label>
+                            <input type="text" required class="form-control" name="address" value="{{userprofile.address}}" placeholder="Avenida Pajaritos #1425">
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label>Region</label>
+                            <input type="text" required class="form-control" name="region" value="{{userprofile.region}}" placeholder="Metropolitana">
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label>Comuna</label>
+                            <input type="text" required class="form-control" name="comuna" value="{{userprofile.comuna}}" placeholder="Maipú">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h6>Orden de compra</h6>
+                    <hr>
+                    {% if cartitems %}
+                        
+                        {% for item in cartitems%}
+                            <div class="row item">
+                                <div class="col-3 align-self-center"><img class="img-fluid" src="{{item.product.product_imagen.url}}"></div>
+                                <div class="col-8">
+                                    <div class="row"><b>$ {{item.product.selling_price |floatformat:0|intcomma}}</b></div>
+                                    <div class="row text-muted">{{item.product.name}}</div>
+                                    <div class="row">Cantidad: {{item.product_qty}}</div>
+                                </div>
+                            </div>
+                            <hr>
+                        {% endfor %}
+                        <h6 class="fw-bold">Total 
+                            <span class="float-end">$ {{total_price |floatformat:0|intcomma}}</span>
+                        </h6>
+                        <input type="hidden" value="DEBITO" name="payment_mode">
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-success w-100">Pagar</button>
+                            <div id="paypal-button-container" class="mt-2"></div>
+                        </div>
+                    {% else %}
+                        <h4>Tu carro está vacio</h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AZjtHH2NB6a-WsWr59vyyIXfXWYmrlTczCkl-rSGpGAfXeVbm1bPbZfAbMjkgYa0l_7rM1s5nHNH6aeI&currency=USD"></script>
+
+<script>
+    var total = '{{total_price | stringformat:'d'}}'
+    var total_dolar = total / 860
+
+        
+    paypal.Buttons({
+        style: {
+            layout: 'vertical',
+            color: 'blue',
+            shape: 'rect'
+
+        },
+        onClick : function(data, actions){
+            var fname = $("[name='fname']").val();
+            var lname = $("[name='lname']").val();
+            var email = $("[name='email']").val();
+            var phone = $("[name='phone']").val();
+            var address = $("[name='address']").val();
+            var region = $("[name='region']").val();
+            var comuna = $("[name='comuna']").val();
+            var token = $("[name='csrfmiddlewaretoken']").val();
+
+            if (fname == "" || lname == "" || email == "" || phone  == "" || region == "" || comuna == "" || token == "")
+            {
+                swal("Alerta!", "Todos los campos son obligatorios", "error");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            },
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: Math.round(total_dolar)
+
+                    }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(orderData) {
+                var fname = $("[name='fname']").val();
+                var lname = $("[name='lname']").val();
+                var email = $("[name='email']").val();
+                var phone = $("[name='phone']").val();
+                var address = $("[name='address']").val();
+                var region = $("[name='region']").val();
+                var comuna = $("[name='comuna']").val();
+                var token = $("[name='csrfmiddlewaretoken']").val();
+                data = {
+                    "fname": fname,
+                    "lname": lname,
+                    "email": email,
+                    "phone": phone,
+                    "address": address,
+                    "region": region,
+                    "comuna": comuna,
+                    "payment_mode": "Pago por PayPal",
+                    "payment_id": orderData.id,
+                    csrfmiddlewaretoken:token
+                }
+                $.ajax({
+                    method: "POST",
+                    url: "/place-order",
+                    data: data,
+                    success: function(responsec){
+                        swal("Felicidades!", responsec.status, "success").then((value) =>{
+                            window.location.href = '/my-orders'
+                        });
+                    }
+                });
+            });
+        }
+
+
+    }).render('#paypal-button-container');
+</script>
+</script>
+{% endblock scripts %}

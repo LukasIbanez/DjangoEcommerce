@@ -1,0 +1,39 @@
+{% extends "store/layouts/main.html" %}
+{% load humanize %}
+{% block content %}
+<div class="py-3 directorio">
+    <div class="container">
+        <a class="text-white" href="{% url 'home' %}"> Inicio /</a>
+        <a class="text-white" href="{% url 'collections' %}"> Categorias /</a>
+        <a class="text-white" href="{% url 'collectionsview' category.slug %}"> {{category.name}} </a>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{category.name}}</h1>
+            <hr>
+            <div class="row">
+                {% for item in products %}
+                <div class="col-md-3">
+                    <div class="card">
+                        <a href="{% url 'productview' item.category.slug item.slug %}">
+                            <div class="card-body">
+                                <div class="category-image">
+                                    <img src="{{ item.product_imagen.url}}" alt="Product image" class="w-100 img-fluid" style="height:250px;">
+                                </div>
+                                <hr>
+                                <h4 class="text-center" style="color:black;font-size:18px;">{{item.name}}</h4>
+                                <span class="float-start" style="color:grey;font-size:14px;text-decoration: line-through;">$ {{item.original_price |floatformat:0|intcomma}}</span>
+                                <span class="float-end" style="color:black;font-size:18px;font-style: italic;">$ {{item.selling_price |floatformat:0|intcomma}}</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+    

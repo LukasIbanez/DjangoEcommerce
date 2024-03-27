@@ -1,0 +1,19 @@
+body {
+    background-color: #f9ddf5 !important; /* Puedes sustituir #f0f0f0 por el color que desees */
+}
+.checkoutform label{
+    font-size: 14px !important;
+    font-weight:600;
+}
+
+.checkoutform input{
+    font-size: 14px !important;
+}
+
+.directorio{
+    background-color: rgb(244 79 255);
+}
+
+.search-bar{
+    width: 30%;
+}

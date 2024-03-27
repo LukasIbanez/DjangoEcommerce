@@ -1,0 +1,35 @@
+{% extends "store/layouts/main.html" %}
+{% block content %}
+<div class="py-3 directorio" >
+    <div class="container">
+        <a class="text-white" href="{% url 'home' %}"> Inicio /</a>
+        <a class="text-white" href="{% url 'collections' %}"> Categorias </a>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Categorias</h1>
+            <hr>
+            <div class="row">
+                {% for item in category %}
+                <div class="col-md-3">
+                    <div class="card">
+                        <a href="{% url 'collectionsview' item.slug %}">
+                            <div class="card-body">
+                                <div class="category-image">
+                                    <img src="{{ item.imagen.url}}" alt="Category image" class="w-100 img-fluid" style="height:250px;">
+                                </div>
+                                <hr>
+                                <h4 class="text-center" style="color:black;font-size:18px;">{{item.name}}</h4>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+    

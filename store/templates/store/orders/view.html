@@ -1,0 +1,94 @@
+{% extends 'store/layouts/main.html' %}
+{% load humanize %}
+{% block content %}
+<div class="py-3 bg-gradient directorio">
+    <div class="container">
+        <a class= "text-white" href= " {% url 'home' %}"> Inicio /</a>
+        <a class= "text-white" href= " {% url 'myorders' %}"> Mis compras </a>
+    </div>
+</div>
+<div class="container my-3">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h2 class="mb-0"> Orden
+                        <a href= "{% url 'myorders' %}" class ="btn btn-warning float-end text-black"> volver </a>
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Detalle comprador</h4>
+                            <hr>
+                            <div style="width:50%">
+                                <div class="d-flex flex-column">
+                                    <p class="text mb-1">Nombre</p>
+                                    <div class="form-control mb-3" type="text" style="border-color:#9b9b9b;" value="Barry Allen" >{{ order.fname }} {{ order.lname }}</div>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <p class="text mb-1">Correo</p>
+                                    <div class="form-control mb-3" type="text" style="border-color:#9b9b9b;" value="Barry Allen" >{{ order.email }}</div>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <p class="text mb-1">Telefono</p>
+                                    <div class="form-control mb-3" type="text" style="border-color:#9b9b9b;" value="Barry Allen" >{{ order.phone }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Producto/s</h4>
+                            <hr>
+                            <div class="container-fluid my-5  d-flex  justify-content-center">
+                                <div class="card card-1">
+                                    <div class="card-body">
+                                        <div class="row justify-content-between mb-3">
+                                            <div class="col-auto"> <h6 class="color-1 mb-0 change-color">Recibo</h6> </div>
+                                            <div class="col-auto  "> <small>Número de orden: <strong>{{order.tracking_no}}</strong></small> </div>
+                                        </div>
+                                        {% for item in orderitems %}
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="card card-2">
+                                                    <div class="card-body">
+                                                        <div class="media">
+                                                            <div class="media-body my-auto text-right">
+                                                            
+                                                                <div class="row  my-auto flex-column flex-md-row">
+                                                                    <div class="col my-auto"> <img class="img-fluid  my-auto align-self-center mr-2 mr-md-4 pl-0 p-0 m-0" src="{{item.product.product_imagen.url}} " width="135" height="135" /></div>
+                                                                    <div class="col my-auto"> <h6 class="mb-0"> {{item.product.name}}</h6>  </div>
+                                                                    <div class="col my-auto"> <small>Cantidad : {{item.quantity}}</small></div>
+                                                                    <div class="col my-auto"><h6 class="mb-0" style="text-align: right;">$ {{item.price |floatformat:0|intcomma}}</h6>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr class="my-3 ">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        <br>
+                                        <div class="row invoice ">
+                                            <div class="col" style="text-align:right;"><p class="mb-1"> Metodo de pago: <strong>{{order.payment_mode}}</strong></p><p class="mb-1">Estado de Orden: <strong>{{order.status}}</strong></p><p class="mb-1">Numero de orden: <strong>{{order.tracking_no}}</strong></p><p class="mb-1">Fecha compra: <strong>{{order.created_at}}</strong></p></div>
+                                        </div>
+                                        <div class="row mt-4">
+                                            <div class="col">
+                                                <div class="row justify-content-between">
+                                                    <div class="flex-sm-col text-right col"> <p class="mb-1"><b>Total</b></p> </div>
+                                                    <div class="flex-sm-col col-auto"> <p class="mb-1">$ {{ order.total_price |floatformat:0|intcomma}}</p> </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content%}
